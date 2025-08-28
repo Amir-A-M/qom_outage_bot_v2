@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext", // use ESM
-    "moduleResolution": "node", // correct resolution for ESM in Node
-    "verbatimModuleSyntax": false, // or remove this line entirely
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "outDir": "dist"
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "src"

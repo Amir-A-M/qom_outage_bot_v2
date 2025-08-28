@@ -3,16 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "vitest",
-    "start": "ts-node src/index.ts",
-    "build": "tsc",
-    "lint": "eslint . --ext .ts",
-    "format": "prettier --write ."
+    "dev": "vite-node src/index.ts",
+    "build": "vite build",
+    "start": "node dist/index.js",
+    "test": "vitest"
   },
   "keywords": [],
-  "author": "",
+  "author": "https://github.com/Amir-A-M",
   "license": "UNLICENSED",
-  "type": "commonjs",
+  "type": "module",
   "description": "",
   "dependencies": {
     "axios": "^1.11.0",
@@ -20,7 +19,8 @@
     "date-fns-jalali": "^4.1.0-0",
     "dotenv": "^17.2.1",
     "form-data": "^4.0.4",
-    "node-cron": "^4.2.1"
+    "node-cron": "^4.2.1",
+    "nodemon": "^3.1.10"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
@@ -32,7 +32,9 @@
     "prettier": "^3.6.2",
     "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2",
+    "vite": "^6.3.5",
     "vitest": "^3.2.4"
   }
 }
