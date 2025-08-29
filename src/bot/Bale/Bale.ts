@@ -10,7 +10,12 @@ type Update = {
   };
 };
 
-type Button = { text: string; callback_data: string };
+export type Button = {
+  text: string;
+  callback_data?: string;
+  url?: string;
+  copy_text?: { text: string };
+};
 
 type CommandHandler = (chatId: string, text: string) => Promise<void> | void;
 
@@ -27,9 +32,11 @@ export default class Bale {
   /** Send a plain text message */
   static async sendMessage(
     chatId: string | number,
-    text: string,
+    text: string | string[],
     buttons?: Button[]
   ) {
+    if (!text) return;
+
     const reply_markup = {
       inline_keyboard: [
         buttons?.map((b) => ({ text: b.text, callback_data: b.callback_data })),
@@ -40,7 +47,7 @@ export default class Bale {
       `${this.apiBase}/sendMessage`,
       {
         chat_id: chatId,
-        text,
+        text: typeof text === 'string' ? text : text.join('\n\n'),
         reply_markup: !!buttons && reply_markup,
       },
       { headers: { 'Content-Type': 'application/json' } }
@@ -51,12 +58,16 @@ export default class Bale {
   static async sendPhoto(
     chatId: string | number,
     photoPath: string,
-    caption?: string
+    caption?: string | string[]
   ) {
     const form = new FormData();
     form.append('chat_id', chatId.toString());
     form.append('photo', fs.createReadStream(photoPath));
-    if (caption) form.append('caption', caption);
+    if (caption)
+      form.append(
+        'caption',
+        typeof caption === 'string' ? caption : caption.join('\n\n')
+      );
 
     await axios.post(`${this.apiBase}/sendPhoto`, form, {
       headers: form.getHeaders(),
@@ -106,19 +117,20 @@ export default class Bale {
             // ✅ Button clicks (callback queries)
             if (update.callback_query) {
               const chatId = update.callback_query.message.chat.id.toString();
-              const data = update.callback_query.data;
+              const fullData = update.callback_query.data;
+              const data = fullData.split('|')[0];
 
               // 1) Dedicated callback handlers
               if (this.callbacks.has(data)) {
-                await this.callbacks.get(data)!(chatId, data);
+                await this.callbacks.get(data)!(chatId, fullData);
               }
               // 2) Fallback: reuse command handlers
               else if (this.commands.has(data)) {
-                await this.commands.get(data)!(chatId, data);
+                await this.commands.get(data)!(chatId, fullData);
               }
               // 3) Last fallback: default handler
               else if (this.defaultHandler) {
-                await this.defaultHandler(chatId, data);
+                await this.defaultHandler(chatId, fullData);
               }
 
               // ✅ optional: acknowledge button press

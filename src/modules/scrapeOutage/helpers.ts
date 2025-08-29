@@ -139,27 +139,18 @@ export function parseOutagePlaces(
         // Look backwards for outage times (marked by ❌)
         for (let j = i - 1; j >= 0; j--) {
           const prevText = descriptionLines[j];
+
           if (prevText.includes('❌')) {
             const time = parseOutageTime(prevText);
             if (time) outageTimes.push(time);
-          } else if (!prevText.includes('ساعت')) {
-            break; // Stop if no time-related text
+            break;
           }
         }
       }
     }
 
-    if (!found) {
-      return {
-        error: `Place "${place.phrase}" not found in outage data`,
-        code: 404,
-      };
-    }
-    if (!outageTimes.length) {
-      return {
-        error: `No outage times found for place "${place.phrase}"`,
-        code: 422,
-      };
+    if (!found || !outageTimes.length) {
+      continue;
     }
 
     placeOutages.push({ place, outageTimes });

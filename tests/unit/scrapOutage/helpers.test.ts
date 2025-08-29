@@ -58,39 +58,6 @@ describe('parseOutagePlaces()', () => {
     expect(result).toEqual({ error: 'No places provided', code: 400 });
   });
 
-  it('should return error if place not found', () => {
-    const html = `
-      <div class="AnnDescription">
-        <p>❌ ساعت 10 تا 12</p>
-        <p>خیابان دیگر</p>
-      </div>
-    `;
-    const $ = load(html);
-    const result = parseOutagePlaces($, [
-      { phrase: 'خیابان عدالت', alias: 'دفتر' },
-    ]);
-    expect(result).toEqual({
-      error: 'Place "خیابان عدالت" not found in outage data',
-      code: 404,
-    });
-  });
-
-  it('should return error if place found but no outage times', () => {
-    const html = `
-      <div class="AnnDescription">
-        <p>بلوار جمهوری فلکه مرجعیت خیابان ارمیده خیابان عدالت</p>
-      </div>
-    `;
-    const $ = load(html);
-    const result = parseOutagePlaces($, [
-      { phrase: 'خیابان عدالت', alias: 'دفتر' },
-    ]);
-    expect(result).toEqual({
-      error: 'No outage times found for place "خیابان عدالت"',
-      code: 422,
-    });
-  });
-
   it('should return 1 outage time', () => {
     const html = `
       <div class="AnnDescription">

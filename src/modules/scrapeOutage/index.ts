@@ -31,6 +31,7 @@ class ScrapPowerOutage {
     }
 
     const placesOutages = parseOutagePlaces($, places);
+
     if ('error' in placesOutages) {
       return placesOutages;
     }
