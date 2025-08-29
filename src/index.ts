@@ -4,6 +4,7 @@ import { parsePlaces, stringifyPlaces } from './utils/placeParser';
 import { UserService } from './modules/users/users';
 import ScrapPowerOutage from './modules/scrapeOutage';
 import { toReadableJalali } from './utils/toReadableJalali';
+import cron from 'node-cron';
 dotenv.config();
 
 const Users = new UserService();
@@ -112,7 +113,7 @@ async function checkOutage(chatId: string) {
   const formattedDate = toReadableJalali(ScrapedOutage.date);
   await Bale.sendMessage(
     chatId,
-    `⚠️${formattedDate}\n` + outageResult,
+    `📢 ${formattedDate}:\n` + outageResult,
     buttons
   );
 }
@@ -188,3 +189,16 @@ Bale.onMessage(async (chatId, text) => {
 
 // Start
 Bale.startPolling();
+
+// Scheduled job
+cron.schedule('0 0 22 * * *', async () => {
+  let count = 0;
+  for (const [chatId, data] of Object.entries(Users.getUsers())) {
+    if (!data.places?.length) continue;
+
+    count++;
+    await checkOutage(chatId);
+  }
+
+  console.log(`Sent ${count} outage Notifs for ${new Date().toString()}`);
+});
