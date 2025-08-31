@@ -39,7 +39,11 @@ export default class Bale {
 
     const reply_markup = {
       inline_keyboard: [
-        buttons?.map((b) => ({ text: b.text, callback_data: b.callback_data })),
+        buttons?.map((b) => ({
+          text: b.text,
+          callback_data: b.callback_data,
+          copy_text: b.copy_text,
+        })),
       ],
     };
 
